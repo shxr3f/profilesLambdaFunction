@@ -1,0 +1,52 @@
+name: Package and Upload Lambda Artifact
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-southeast-1
+  ARTIFACT_BUCKET: your-lambda-artifact-bucket-name
+  ARTIFACT_KEY: profiles/v1.0.0/profiles_ingest.zip
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install zip utility
+        run: sudo apt-get update && sudo apt-get install -y zip
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::345895787413:role/profiles-dev-github-actions-role
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Package Lambda
+        run: ./package.sh profiles_ingest.zip
+
+      - name: Upload artifact to S3
+        run: |
+          aws s3 cp dist/profiles_ingest.zip s3://${ARTIFACT_BUCKET}/${ARTIFACT_KEY}
+      
+      - name: Update Lambda function code
+        run: |
+          aws lambda update-function-code \
+            --function-name profiles-dev-profiles-ingest \
+            --s3-bucket ${ARTIFACT_BUCKET} \
+            --s3-key ${ARTIFACT_KEY}
