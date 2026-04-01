@@ -7,7 +7,7 @@ os.environ["DATA_LAKE_BUCKET"] = "mock-bucket"
 os.environ["INPUT_PREFIX"] = "raw/input/"
 os.environ["RAW_PREFIX"] = "raw/api_response/"
 os.environ["BRONZE_PREFIX"] = "bronze/"
-os.environ["PDL_API_KEY"] = "598564337692c4d4f56699edd219c559439b7e8a73161489d072992383fa458e"
+os.environ["PDL_API_KEY"] = "REDACTED"
 
 event = {
     "Records": [
