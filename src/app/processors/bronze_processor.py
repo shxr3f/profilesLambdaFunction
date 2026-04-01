@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime, timezone
 
 from app.config import DATA_LAKE_BUCKET, BRONZE_PREFIX
-from app.util.s3_io import read_json, write_parquet_rows
+from app.util.s3_io import read_json, write_csv_rows
 
 
 def flatten_person(person: dict, partition_date: str) -> dict:
@@ -176,10 +176,10 @@ def flatten_profiles(person: dict, partition_date: str) -> list[dict]:
 def build_dataset_keys(date_partition: str, run_id: str) -> dict:
     base = BRONZE_PREFIX.rstrip("/")
     return {
-        "people": f"{base}/people/date={date_partition}/{run_id}.parquet",
-        "experience": f"{base}/experience/date={date_partition}/{run_id}.parquet",
-        "education": f"{base}/education/date={date_partition}/{run_id}.parquet",
-        "profiles": f"{base}/profiles/date={date_partition}/{run_id}.parquet",
+        "people": f"{base}/people/date={date_partition}/{run_id}.csv",
+        "experience": f"{base}/experience/date={date_partition}/{run_id}.csv",
+        "education": f"{base}/education/date={date_partition}/{run_id}.csv",
+        "profiles": f"{base}/profiles/date={date_partition}/{run_id}.csv",
     }
 
 
@@ -217,7 +217,7 @@ def process_raw_to_bronze(raw_bucket: str, raw_key: str) -> dict:
     written = {}
 
     if people_rows:
-        write_parquet_rows(
+        write_csv_rows(
             bucket=DATA_LAKE_BUCKET,
             key=output_keys["people"],
             rows=people_rows,
@@ -225,7 +225,7 @@ def process_raw_to_bronze(raw_bucket: str, raw_key: str) -> dict:
         written["people_output_key"] = output_keys["people"]
 
     if experience_rows:
-        write_parquet_rows(
+        write_csv_rows(
             bucket=DATA_LAKE_BUCKET,
             key=output_keys["experience"],
             rows=experience_rows,
@@ -233,7 +233,7 @@ def process_raw_to_bronze(raw_bucket: str, raw_key: str) -> dict:
         written["experience_output_key"] = output_keys["experience"]
 
     if education_rows:
-        write_parquet_rows(
+        write_csv_rows(
             bucket=DATA_LAKE_BUCKET,
             key=output_keys["education"],
             rows=education_rows,
@@ -241,7 +241,7 @@ def process_raw_to_bronze(raw_bucket: str, raw_key: str) -> dict:
         written["education_output_key"] = output_keys["education"]
 
     if profile_rows:
-        write_parquet_rows(
+        write_csv_rows(
             bucket=DATA_LAKE_BUCKET,
             key=output_keys["profiles"],
             rows=profile_rows,

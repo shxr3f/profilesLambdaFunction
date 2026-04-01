@@ -95,4 +95,4 @@ from handler import lambda_handler
 response = lambda_handler(event1, None)
 #uncomment to test Stage 2 (change Records.s3.object.key file name in the event object to follow the file name that was created in the local output folder)
 #response = lambda_handler(event2, None)
-#print(json.dumps(response, indent=2))
+print(json.dumps(response, indent=2))

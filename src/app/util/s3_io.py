@@ -56,29 +56,26 @@ def write_json(bucket: str, key: str, payload: dict) -> None:
         ContentType="application/json",
     )
 
-
-def write_parquet_rows(bucket: str, key: str, rows: list[dict]) -> None:
+def write_csv_rows(bucket: str, key: str, rows: list[dict]) -> None:
     if not rows:
         return
 
-    df = pd.DataFrame(rows)
+    fieldnames = list(rows[0].keys())
+    buffer = io.StringIO()
+    writer = csv.DictWriter(buffer, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerows(rows)
 
     if is_local_mode():
-        # mimic S3 structure locally
         local_path = Path("local_bronze") / key
-        # ensure directories exist
         local_path.parent.mkdir(parents=True, exist_ok=True)
-        # write locally
-        df.to_parquet(local_path, index=False)
+        with open(local_path, "w", encoding="utf-8", newline="") as f:
+            f.write(buffer.getvalue())
         return
 
-    # Lambda / S3 mode
-    tmp_path = f"/tmp/{uuid.uuid4().hex}.parquet"
-
-    try:
-        df.to_parquet(tmp_path, index=False)
-        s3.upload_file(tmp_path, bucket, key)
-
-    finally:
-        if os.path.exists(tmp_path):
-            os.remove(tmp_path)
+    s3.put_object(
+        Bucket=bucket,
+        Key=key,
+        Body=buffer.getvalue().encode("utf-8"),
+        ContentType="text/csv",
+    )

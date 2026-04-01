@@ -1,4 +1,2 @@
 peopledatalabs
 boto3
-pandas
-pyarrow
