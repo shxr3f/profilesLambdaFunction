@@ -50,9 +50,8 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
-local_input/
-local_output/
-run_local.py
+local_output/*
+local_bronze/*
 
 # Translations
 *.mo

@@ -2,6 +2,7 @@ import os
 
 AWS_REGION = os.getenv("AWS_REGION", "ap-southeast-1")
 DATA_LAKE_BUCKET = os.getenv("DATA_LAKE_BUCKET", "")
-INPUT_KEY = os.getenv("INPUT_KEY", "raw/input/profiles.csv")
-OUTPUT_PREFIX = os.getenv("OUTPUT_PREFIX", "raw/api_response/")
+INPUT_PREFIX = os.getenv("INPUT_PREFIX", "raw/input/")
+RAW_PREFIX = os.getenv("RAW_PREFIX", "raw/api_response/")
+BRONZE_PREFIX = os.getenv("BRONZE_PREFIX", "bronze/")
 PDL_API_KEY = os.getenv("PDL_API_KEY", "")

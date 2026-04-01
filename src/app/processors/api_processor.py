@@ -1,10 +1,9 @@
 from datetime import datetime, timezone
 import uuid
 
-from app.config import OUTPUT_PREFIX
-from app.pdl_client import enrich_person, build_pdl_client
-from app.s3_io import read_csv, write_json
-
+from app.config import RAW_PREFIX
+from app.util.pdl_client import enrich_person, build_pdl_client
+from app.util.s3_io import read_csv, write_json
 
 def process_profiles(data_lake_bucket: str, input_key: str, api_key: str) -> dict:
     records = read_csv(data_lake_bucket, input_key)
@@ -13,21 +12,14 @@ def process_profiles(data_lake_bucket: str, input_key: str, api_key: str) -> dic
 
     output = []
     for idx, record in enumerate(records):
-        name = record.get("name")
-        email = record.get("email")
+        first_name = record.get("first_name")
+        last_name = record.get("last_name")
 
-        result = enrich_person(client=client, name=name, email=email)
+        result = enrich_person(first_name=first_name, last_name=last_name, client=client)
 
-        data = result["body"].get("data", {})
-        print("work_email:", data.get("work_email"))
-        print("personal_emails:", data.get("personal_emails"))
-        print("recommended_personal_email:", data.get("recommended_personal_email"))
+        data = result["body"].get("data", [])
 
-        output.append({
-            "input_index": idx,
-            "input": record,
-            "pdl_result": result,
-        })
+        output.extend(data)
 
     now = datetime.now(timezone.utc)
     timestamp = now.strftime("%Y%m%dT%H%M%SZ")
@@ -35,7 +27,7 @@ def process_profiles(data_lake_bucket: str, input_key: str, api_key: str) -> dic
     run_id = uuid.uuid4().hex[:8]
 
     output_key = (
-        f"{OUTPUT_PREFIX}date={date_partition}/"
+        f"{RAW_PREFIX}date={date_partition}/"
         f"{timestamp}_{run_id}.json"
     )
 
