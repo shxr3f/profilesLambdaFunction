@@ -47,6 +47,6 @@ jobs:
       - name: Update Lambda function code
         run: |
           aws lambda update-function-code \
-            --function-name profiles-dev-profiles-ingest \
+            --function-name profiles-dev-ingest \
             --s3-bucket ${ARTIFACT_BUCKET} \
             --s3-key ${ARTIFACT_KEY}
