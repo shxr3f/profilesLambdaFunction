@@ -1,6 +1,7 @@
 import json
 import urllib.parse
 import traceback
+import json
 
 from app.config import DATA_LAKE_BUCKET
 from app.routes import route_s3_event
@@ -27,6 +28,11 @@ def lambda_handler(event, context):
 
             result = route_s3_event(bucket=bucket, key=key)
             results.append(result)
+        
+        print(json.dumps({
+            "status": "success",
+            "results": results,
+        }, indent=2))
 
         return {
             "statusCode": 200,
@@ -39,7 +45,7 @@ def lambda_handler(event, context):
     except Exception as e:
         traceback_str = traceback.format_exc()
 
-        #print(traceback_str)  # 👈 shows in CloudWatch logs
+        print(traceback_str)  # 👈 shows in CloudWatch logs
 
         return {
             "statusCode": 500,
