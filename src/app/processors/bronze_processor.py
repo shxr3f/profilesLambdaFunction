@@ -7,7 +7,6 @@ from app.util.s3_io import read_json, write_csv_rows
 
 def flatten_person(person: dict, partition_date: str) -> dict:
     return {
-        "date": partition_date,
         "person_id": person.get("id"),
         "full_name": person.get("full_name"),
         "first_name": person.get("first_name"),
@@ -94,7 +93,6 @@ def flatten_experience(person: dict, partition_date: str) -> list[dict]:
         title = exp.get("title", {}) or {}
 
         rows.append({
-            "date": partition_date,
             "person_id": person_id,
             "experience_index": idx,
             "company_name": company.get("name"),
@@ -131,7 +129,6 @@ def flatten_education(person: dict, partition_date: str) -> list[dict]:
         school = edu.get("school", {}) or {}
 
         rows.append({
-            "date": partition_date,
             "person_id": person_id,
             "education_index": idx,
             "school_name": school.get("name"),
@@ -161,7 +158,6 @@ def flatten_profiles(person: dict, partition_date: str) -> list[dict]:
 
     for idx, profile in enumerate(person.get("profiles", [])):
         rows.append({
-            "date": partition_date,
             "person_id": person_id,
             "profile_index": idx,
             "network": profile.get("network"),
