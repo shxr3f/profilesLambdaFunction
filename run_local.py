@@ -3,11 +3,13 @@ import os
 import sys
 
 os.environ["LOCAL_MODE"] = "true"
+os.environ["AWS_REGION"] = "ap-southeast-1"
 os.environ["DATA_LAKE_BUCKET"] = "mock-bucket"
 os.environ["INPUT_PREFIX"] = "raw/input/"
 os.environ["RAW_PREFIX"] = "raw/api_response/"
 os.environ["BRONZE_PREFIX"] = "bronze/"
-os.environ["PDL_API_KEY"] = "REDACTED"
+os.environ["PDL_SECRET_ARN"] = "REDACTED"
+os.environ["PDL_API_KEY"] = "<INSERT KEY HERE>"
 
 event = {
     "Records": [
@@ -92,7 +94,7 @@ from handler import lambda_handler
 #print('hello')
 
 #Uncomment to test Stage 1 (change Records.s3.object.key file name in the event object to follow ur local file name)
-response = lambda_handler(event1, None)
+response = lambda_handler(event, None)
 #uncomment to test Stage 2 (change Records.s3.object.key file name in the event object to follow the file name that was created in the local output folder)
 #response = lambda_handler(event2, None)
 print(json.dumps(response, indent=2))
