@@ -88,4 +88,4 @@ TBLPROPERTIES (
   'skip.header.line.count'='1'
 );
 
-MSCK REPAIR TABLE profiles_bronze.people_fixed;
+MSCK REPAIR TABLE profiles_bronze.people;
