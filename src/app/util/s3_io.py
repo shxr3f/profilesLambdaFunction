@@ -4,7 +4,6 @@ import json
 import os
 from pathlib import Path
 import uuid
-import pandas as pd
 
 import boto3
 
